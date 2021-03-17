@@ -13,6 +13,12 @@ Output:
     + docker run --rm -it -v /path:/denv/workdir -w /denv/workdir busybox echo Hello World!
     Hello World!
 
+## Development
+
+    $ go run ./denv/main.go <args>
+    $ go build -o build/denv.exe ./denv
+    $ build/denv.exe <args>
+
 # Ideas
 
 https://github.com/drone/drone-cli/blob/master/drone/main.go
