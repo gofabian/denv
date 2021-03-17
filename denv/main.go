@@ -27,7 +27,7 @@ func execCommand(args []string) int {
 	cmd := exec.Command(args[0], args[1:]...)
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout
-	cmd.Stdout = os.Stderr
+	cmd.Stderr = os.Stderr
 	cmd.Run()
 	return cmd.ProcessState.ExitCode()
 }
