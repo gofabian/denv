@@ -1,9 +1,2 @@
 ---
-name: default
 image: python:3.8
-args: -v maven_home:/root/.m2
-shell: /bin/bash
-exec.script: scripts/execute.sh
-exec.steps:
-  - ls -l
-  - whoami

@@ -25,6 +25,18 @@ Output:
     # ...
     # exit
 
+### Config file in working directory
+
+`.denv.yml`:
+
+    ---
+    image: python:3.8
+
+Skip image option `-i`:
+
+    $ denv run echo 123
+    $ denv shell
+
 
 ## Development
 

@@ -1,6 +1,9 @@
 package cmd
 
 import (
+	"fmt"
+
+	"github.com/gofabian/denv/cfg"
 	"github.com/urfave/cli/v2"
 )
 
@@ -9,17 +12,35 @@ var RunCommand = &cli.Command{
 	Usage: "run command in Docker container",
 	Flags: []cli.Flag{
 		&cli.StringFlag{
-			Name:     "image",
-			Aliases:  []string{"i"},
-			Usage:    "Docker `IMAGE`, e.g. 'busybox:1'",
-			Required: true,
+			Name:    "image",
+			Aliases: []string{"i"},
+			Usage:   "Docker `IMAGE`, e.g. 'busybox:1'",
 		},
 	},
 	Action: run,
 }
 
 func run(c *cli.Context) error {
-	image := c.String("image")
+	cfg, err := loadRunConfig(c)
+	if err != nil {
+		return err
+	}
+
 	args := c.Args().Slice()
-	return execDockerRun(image, args)
+	return execDockerRun(cfg.Image, args)
+}
+
+func loadRunConfig(c *cli.Context) (*cfg.DenvConfig, error) {
+	cfg, err := cfg.ReadConfigFromFile()
+	if err != nil {
+		return nil, err
+	}
+
+	if c.IsSet("image") {
+		cfg.Image = c.String("image")
+	}
+	if cfg.Image == "" {
+		return nil, fmt.Errorf("missing image")
+	}
+	return cfg, nil
 }
