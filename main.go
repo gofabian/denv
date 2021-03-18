@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/gofabian/denv/run"
-
 	"github.com/urfave/cli/v2"
+
+	"github.com/gofabian/denv/cmd"
 )
 
 func main() {
@@ -14,7 +14,8 @@ func main() {
 		Name:  "denv",
 		Usage: "Use working directory in docker image",
 		Commands: []*cli.Command{
-			run.Command,
+			cmd.RunCommand,
+			cmd.ShellCommand,
 		},
 	}
 

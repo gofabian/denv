@@ -4,7 +4,7 @@ Use your working directory within a Docker image.
 
 ## Example
 
-Run:
+### Run
 
     $ cd /path
     $ denv run -i busybox echo Hello World!
@@ -13,6 +13,18 @@ Output:
 
     + docker run --rm -it -v /path:/denv/workdir -w /denv/workdir busybox echo Hello World!
     Hello World!
+
+### Shell
+
+    $ cd /path
+    $ denv shell -i busybox
+
+Output:
+
+    + docker run --rm -it -v /path:/denv/workdir -w /denv/workdir busybox /bin/sh
+    # ...
+    # exit
+
 
 ## Development
 

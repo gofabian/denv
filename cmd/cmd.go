@@ -1,37 +1,21 @@
-package run
+package cmd
 
 import (
 	"fmt"
 	"os"
 	"os/exec"
 	"strings"
-
-	"github.com/urfave/cli/v2"
 )
 
-var Command = &cli.Command{
-	Name:  "run",
-	Usage: "run command in Docker container",
-	Flags: []cli.Flag{
-		&cli.StringFlag{
-			Name:     "image",
-			Aliases:  []string{"i"},
-			Usage:    "Docker `IMAGE`, e.g. 'busybox:1'",
-			Required: true,
-		},
-	},
-	Action: run,
-}
-
-func run(c *cli.Context) error {
+func execDockerRun(image string, dockerCmd []string) error {
 	cwd, err := os.Getwd()
 	if err != nil {
 		return err
 	}
 
 	args := []string{"docker", "run", "--rm", "-it", "-v", cwd + ":/denv/workdir",
-		"-w", "/denv/workdir", c.String("image")}
-	args = append(args, c.Args().Slice()...)
+		"-w", "/denv/workdir", image}
+	args = append(args, dockerCmd...)
 
 	exitCode := execCommand(args)
 	os.Exit(exitCode)
