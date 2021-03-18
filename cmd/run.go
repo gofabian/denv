@@ -3,8 +3,9 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/gofabian/denv/cfg"
 	"github.com/urfave/cli/v2"
+
+	"github.com/gofabian/denv/cfg"
 )
 
 var RunCommand = &cli.Command{

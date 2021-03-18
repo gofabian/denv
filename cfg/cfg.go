@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/mitchellh/go-homedir"
 	"gopkg.in/yaml.v2"
 )
 
@@ -41,6 +42,7 @@ func findConfigFile() (string, error) {
 		return "", err
 	}
 
+	// search in parent directories
 	prevDir := dir + "x"
 	for dir != prevDir {
 		path := filepath.Join(dir, ".denv.yml")
@@ -49,6 +51,16 @@ func findConfigFile() (string, error) {
 		}
 		prevDir = dir
 		dir = filepath.Dir(dir)
+	}
+
+	// search in home folder
+	dir, err = homedir.Dir()
+	if err != nil {
+		return "", err
+	}
+	path := filepath.Join(dir, ".config", "denv", ".denv.yml")
+	if existsFile(path) {
+		return path, nil
 	}
 	return "", nil
 }

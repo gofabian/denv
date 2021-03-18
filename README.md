@@ -27,9 +27,13 @@ Output:
 
 ### Config file in working directory
 
-The config file is searched in the current directory or any parent directory.
+The config file is searched in:
 
-`.denv.yml` (or `../.../.denv.yml`):
+- working directory `.`
+- any parent of working directory
+- home folder `~/.config/denv`
+
+`.denv.yml` or `../.../.denv.yml` or `~/.config/denv/.denv.yml`:
 
     ---
     image: python:3.8
