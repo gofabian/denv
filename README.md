@@ -6,7 +6,8 @@ Use your working directory within a Docker image.
 
 Run:
 
-    $ denv busybox echo Hello World!
+    $ cd /path
+    $ denv run -i busybox echo Hello World!
 
 Output:
 
@@ -15,9 +16,17 @@ Output:
 
 ## Development
 
-    $ go run ./denv/main.go <args>
-    $ go build -o build/denv.exe ./denv
-    $ build/denv.exe <args>
+Run:
+
+    $ go run . <args>
+
+Build:
+
+    $ go build -o build/denv .
+    $ build/denv <args>
+
+
+
 
 # Ideas
 
@@ -27,7 +36,7 @@ https://github.com/urfave/cli/blob/master/docs/v2/manual.md#full-api-example
 ## todo
 
     - [x] setup go project
-    - [ ] `run` command with `-i` option
+    - [x] `run` command with `-i` option
     - [ ] `run` command with `- n` option, local `.denv.yml` + `image`/`name`/`args`
     - [ ] `shell` command
 
