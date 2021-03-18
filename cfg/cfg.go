@@ -3,6 +3,7 @@ package cfg
 import (
 	"io/ioutil"
 	"os"
+	"path/filepath"
 
 	"gopkg.in/yaml.v2"
 )
@@ -14,11 +15,15 @@ type DenvConfig struct {
 func ReadConfigFromFile() (*DenvConfig, error) {
 	cfg := &DenvConfig{}
 
-	if !existsFile(".denv.yml") {
+	path, err := findConfigFile()
+	if err != nil {
+		return nil, err
+	}
+	if path == "" {
 		return cfg, nil
 	}
 
-	yamlContent, err := ioutil.ReadFile(".denv.yml")
+	yamlContent, err := ioutil.ReadFile(path)
 	if err != nil {
 		return nil, err
 	}
@@ -28,6 +33,24 @@ func ReadConfigFromFile() (*DenvConfig, error) {
 		return nil, err
 	}
 	return cfg, nil
+}
+
+func findConfigFile() (string, error) {
+	dir, err := os.Getwd()
+	if err != nil {
+		return "", err
+	}
+
+	prevDir := dir + "x"
+	for dir != prevDir {
+		path := filepath.Join(dir, ".denv.yml")
+		if existsFile(path) {
+			return path, nil
+		}
+		prevDir = dir
+		dir = filepath.Dir(dir)
+	}
+	return "", nil
 }
 
 func existsFile(path string) bool {
