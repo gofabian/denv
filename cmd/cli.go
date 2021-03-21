@@ -14,6 +14,7 @@ func RunCliApp() {
 		Commands: []*cli.Command{
 			RunCommand,
 			ShellCommand,
+			ExecCommand,
 		},
 		Flags: []cli.Flag{
 			&cli.StringFlag{

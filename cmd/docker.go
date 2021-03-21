@@ -7,17 +7,19 @@ import (
 	"strings"
 )
 
-func execDockerRun(image string, dockerCmd []string) error {
+func execDockerRun(image string, dockerArgs []string, dockerCmd []string) error {
 	cwd, err := os.Getwd()
 	if err != nil {
 		return err
 	}
 
-	args := []string{"docker", "run", "--rm", "-it", "-v", cwd + ":/denv/workdir",
-		"-w", "/denv/workdir", image}
-	args = append(args, dockerCmd...)
+	cliCmd := []string{"docker", "run", "--rm", "-it", "-v", cwd + ":/denv/workdir",
+		"-w", "/denv/workdir"}
+	cliCmd = append(cliCmd, dockerArgs...)
+	cliCmd = append(cliCmd, image)
+	cliCmd = append(cliCmd, dockerCmd...)
 
-	exitCode := execCommand(args)
+	exitCode := execCommand(cliCmd)
 	os.Exit(exitCode)
 	return nil
 }

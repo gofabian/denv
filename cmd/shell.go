@@ -29,16 +29,16 @@ func shell(c *cli.Context) error {
 		return err
 	}
 
-	args := []string{"/bin/sh"}
+	dockerCmd := []string{"/bin/sh"}
 	if cfg.Shell != "" {
-		customArgs, err := shlex.Split(cfg.Shell)
+		customCmd, err := shlex.Split(cfg.Shell)
 		if err != nil {
 			return err
 		}
-		if len(args) > 0 {
-			args = customArgs
+		if len(dockerCmd) > 0 {
+			dockerCmd = customCmd
 		}
 	}
 
-	return execDockerRun(cfg.Image, args)
+	return execDockerRun(cfg.Image, nil, dockerCmd)
 }

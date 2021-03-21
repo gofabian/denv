@@ -32,8 +32,8 @@ func run(c *cli.Context) error {
 		return err
 	}
 
-	args := c.Args().Slice()
-	return execDockerRun(config.Image, args)
+	dockerCmd := c.Args().Slice()
+	return execDockerRun(config.Image, nil, dockerCmd)
 }
 
 func loadRunConfig(c *cli.Context) (*cfg.NamedConfig, error) {
@@ -56,12 +56,4 @@ func loadRunConfig(c *cli.Context) (*cfg.NamedConfig, error) {
 		return nil, fmt.Errorf("missing image")
 	}
 	return config, nil
-}
-
-func loadDenvConfig(c *cli.Context) (*cfg.DenvConfig, error) {
-	if c.IsSet("config") {
-		return cfg.LoadConfigFrom(c.String("config"))
-	} else {
-		return cfg.LoadConfigFromDefaultDirs()
-	}
 }
