@@ -16,6 +16,14 @@ type NamedConfig struct {
 	Exec  []string `yaml:"exec"`
 }
 
+func (d *DenvConfig) GetAll() []NamedConfig {
+	if len(d.files) == 0 {
+		return nil
+	}
+	// stop at first file
+	return d.files[0].configs
+}
+
 func (d *DenvConfig) GetByNames(names ...string) []NamedConfig {
 	var filteredConfigs []NamedConfig
 

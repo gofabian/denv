@@ -5,6 +5,7 @@ exec:
   - ls
   - echo yes
 ---
+name: build
 image: busybox
 exec:
   - echo busybox
@@ -12,3 +13,5 @@ exec:
 ---
 name: extra
 image: busybox
+exec:
+  - echo extra

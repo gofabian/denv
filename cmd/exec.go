@@ -20,6 +20,11 @@ var ExecCommand = &cli.Command{
 			Usage:   "configuration `NAME` defined in '.denv.yml'",
 			Value:   cli.NewStringSlice(""), // default: empty name
 		},
+		&cli.BoolFlag{
+			Name:    "all",
+			Aliases: []string{"a"},
+			Usage:   "execute all configurations",
+		},
 	},
 	Action: runExec,
 }
@@ -30,10 +35,16 @@ func runExec(c *cli.Context) error {
 		return err
 	}
 
-	names := c.StringSlice("name")
-	namedConfigs := denvConfig.GetByNames(names...)
+	var namedConfigs []cfg.NamedConfig
+	if c.Bool("all") {
+		namedConfigs = denvConfig.GetAll()
+	} else {
+		names := c.StringSlice("name")
+		namedConfigs = denvConfig.GetByNames(names...)
+	}
+
 	if len(namedConfigs) == 0 {
-		return fmt.Errorf("unknown configuration names '%s'", strings.Join(names, "', '"))
+		return fmt.Errorf("no executable configuration")
 	}
 
 	for _, namedConfig := range namedConfigs {
