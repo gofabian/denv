@@ -22,26 +22,29 @@ var RunCommand = &cli.Command{
 }
 
 func run(c *cli.Context) error {
-	cfg, err := loadRunConfig(c)
+	config, err := loadRunConfig(c)
 	if err != nil {
 		return err
 	}
 
 	args := c.Args().Slice()
-	return execDockerRun(cfg.Image, args)
+	return execDockerRun(config.Image, args)
 }
 
-func loadRunConfig(c *cli.Context) (*cfg.DenvConfig, error) {
-	cfg, err := cfg.ReadConfigFromFile()
+func loadRunConfig(c *cli.Context) (*cfg.NamedConfig, error) {
+	if c.IsSet("image") {
+		config := &cfg.NamedConfig{Image: c.String("image")}
+		return config, nil
+	}
+
+	denvConfig, err := cfg.LoadConfig()
 	if err != nil {
 		return nil, err
 	}
 
-	if c.IsSet("image") {
-		cfg.Image = c.String("image")
-	}
-	if cfg.Image == "" {
+	config := denvConfig.GetByName("")
+	if config.Image == "" {
 		return nil, fmt.Errorf("missing image")
 	}
-	return cfg, nil
+	return config, nil
 }

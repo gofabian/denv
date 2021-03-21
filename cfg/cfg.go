@@ -1,7 +1,7 @@
 package cfg
 
 import (
-	"io/ioutil"
+	"io"
 	"os"
 	"path/filepath"
 
@@ -10,51 +10,107 @@ import (
 )
 
 type DenvConfig struct {
+	configs []NamedConfig
+}
+
+type NamedConfig struct {
 	Image string `yaml:"image"`
 }
 
-func ReadConfigFromFile() (*DenvConfig, error) {
-	cfg := &DenvConfig{}
-
-	path, err := findConfigFile()
-	if err != nil {
-		return nil, err
+func (cfg *DenvConfig) GetByName(name string) *NamedConfig {
+	for _, c := range cfg.configs {
+		if "" == name {
+			return &c
+		}
 	}
-	if path == "" {
-		return cfg, nil
-	}
-
-	yamlContent, err := ioutil.ReadFile(path)
-	if err != nil {
-		return nil, err
-	}
-
-	err = yaml.Unmarshal(yamlContent, cfg)
-	if err != nil {
-		return nil, err
-	}
-	return cfg, nil
+	return nil
 }
 
-func findConfigFile() (string, error) {
-	dir, err := os.Getwd()
+func LoadConfig() (*DenvConfig, error) {
+	denvConfig := &DenvConfig{}
+
+	paths, err := findConfigFiles()
 	if err != nil {
-		return "", err
+		return nil, err
+	}
+	if len(paths) == 0 {
+		return denvConfig, nil
 	}
 
-	// search in parent directories
-	prevDir := dir + "x"
+	for _, path := range paths {
+		configs, err := readConfigFile(path)
+		if err != nil {
+			return nil, err
+		}
+		denvConfig.configs = append(denvConfig.configs, configs...)
+	}
+
+	return denvConfig, nil
+}
+
+func readConfigFile(path string) ([]NamedConfig, error) {
+	file, err := os.Open(path)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+
+	decoder := yaml.NewDecoder(file)
+	configs := []NamedConfig{}
+
+	for {
+		cfg := NamedConfig{}
+		err = decoder.Decode(&cfg)
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return nil, err
+		}
+		configs = append(configs, cfg)
+	}
+
+	return configs, nil
+}
+
+func findConfigFiles() ([]string, error) {
+	paths, err := findConfigFilesInWorkingDir()
+	if err != nil {
+		return nil, err
+	}
+
+	p, err := findConfigFileInHomeDir()
+	if err != nil {
+		return nil, err
+	}
+	if p != "" {
+		paths = append(paths, p)
+	}
+	return paths, nil
+}
+
+func findConfigFilesInWorkingDir() ([]string, error) {
+	dir, err := os.Getwd()
+	if err != nil {
+		return nil, err
+	}
+
+	paths := []string{}
+	prevDir := dir + "something"
 	for dir != prevDir {
 		path := filepath.Join(dir, ".denv.yml")
 		if existsFile(path) {
-			return path, nil
+			paths = append(paths, path)
 		}
 		prevDir = dir
 		dir = filepath.Dir(dir)
 	}
 
-	// search in home folder
-	dir, err = homedir.Dir()
+	return paths, nil
+}
+
+func findConfigFileInHomeDir() (string, error) {
+	dir, err := homedir.Dir()
 	if err != nil {
 		return "", err
 	}
