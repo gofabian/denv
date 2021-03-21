@@ -64,6 +64,30 @@ Use named configuration:
     $ denv shell -n 3.9
 
 
+### Execute configuration
+
+`.denv.yml`
+
+    ---
+    image: busybox
+    exec:
+      - echo build
+    ---
+    name: test
+    image: python:3.8
+    exec:
+      - echo test
+
+Execute:
+
+    $ denv exec
+    $ denv exec -n test
+
+Execute all configurations:
+
+    $ denv exec --all
+
+
 ## Development
 
 Run:
