@@ -25,9 +25,9 @@ Output:
     # ...
     # exit
 
-### Config file in working directory
+### Config file
 
-The config file is searched in:
+The config file `.denv.yml` is searched in:
 
 - working directory `.`
 - any parent of working directory
@@ -42,6 +42,10 @@ Skip image option `-i`:
 
     $ denv run echo 123
     $ denv shell
+
+Explicit path to config file:
+
+    $ denv -c my.denv.yml shell
 
 
 ### Named configuration

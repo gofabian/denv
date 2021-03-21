@@ -27,7 +27,17 @@ func (cfg *DenvConfig) GetByName(name string) *NamedConfig {
 	return nil
 }
 
-func LoadConfig() (*DenvConfig, error) {
+func LoadConfigFrom(path string) (*DenvConfig, error) {
+	configs, err := readConfigFile(path)
+	if err != nil {
+		return nil, err
+	}
+
+	denvConfig := &DenvConfig{configs: configs}
+	return denvConfig, nil
+}
+
+func LoadConfigFromDefaultDirs() (*DenvConfig, error) {
 	denvConfig := &DenvConfig{}
 
 	paths, err := findConfigFiles()
