@@ -44,6 +44,22 @@ Skip image option `-i`:
     $ denv shell
 
 
+### Named configuration
+
+`.denv.yml`:
+
+    ---
+    image: python:3.8
+    ---
+    name: 3.9
+    image: python:3.9
+
+Use named configuration:
+
+    $ denv run -n 3.9 echo 123
+    $ denv shell -n 3.9
+
+
 ## Development
 
 Run:

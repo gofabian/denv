@@ -17,6 +17,11 @@ var RunCommand = &cli.Command{
 			Aliases: []string{"i"},
 			Usage:   "Docker `IMAGE`, e.g. 'busybox:1'",
 		},
+		&cli.StringFlag{
+			Name:    "name",
+			Aliases: []string{"n"},
+			Usage:   "configuration `NAME` defined in '.denv.yml'",
+		},
 	},
 	Action: run,
 }
@@ -42,7 +47,11 @@ func loadRunConfig(c *cli.Context) (*cfg.NamedConfig, error) {
 		return nil, err
 	}
 
-	config := denvConfig.GetByName("")
+	name := c.String("name")
+	config := denvConfig.GetByName(name)
+	if config == nil {
+		return nil, fmt.Errorf("unknown configuration name '%s'", name)
+	}
 	if config.Image == "" {
 		return nil, fmt.Errorf("missing image")
 	}

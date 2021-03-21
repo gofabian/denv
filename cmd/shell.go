@@ -13,6 +13,11 @@ var ShellCommand = &cli.Command{
 			Aliases: []string{"i"},
 			Usage:   "Docker `IMAGE`, e.g. 'busybox:1'",
 		},
+		&cli.StringFlag{
+			Name:    "name",
+			Aliases: []string{"n"},
+			Usage:   "configuration `NAME` defined in '.denv.yml'",
+		},
 	},
 	Action: shell,
 }

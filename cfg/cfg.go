@@ -14,12 +14,13 @@ type DenvConfig struct {
 }
 
 type NamedConfig struct {
+	Name  string `yaml:"name"`
 	Image string `yaml:"image"`
 }
 
 func (cfg *DenvConfig) GetByName(name string) *NamedConfig {
 	for _, c := range cfg.configs {
-		if "" == name {
+		if c.Name == name {
 			return &c
 		}
 	}
