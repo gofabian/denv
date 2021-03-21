@@ -14,10 +14,11 @@ var ExecCommand = &cli.Command{
 	Name:  "exec",
 	Usage: "execute steps in Docker container",
 	Flags: []cli.Flag{
-		&cli.StringFlag{
+		&cli.StringSliceFlag{
 			Name:    "name",
 			Aliases: []string{"n"},
 			Usage:   "configuration `NAME` defined in '.denv.yml'",
+			Value:   cli.NewStringSlice(""), // default: empty name
 		},
 	},
 	Action: runExec,
@@ -29,10 +30,10 @@ func runExec(c *cli.Context) error {
 		return err
 	}
 
-	name := c.String("name")
-	namedConfigs := denvConfig.GetByName(name)
+	names := c.StringSlice("name")
+	namedConfigs := denvConfig.GetByNames(names...)
 	if len(namedConfigs) == 0 {
-		return fmt.Errorf("unknown configuration name '%s'", name)
+		return fmt.Errorf("unknown configuration names '%s'", strings.Join(names, "', '"))
 	}
 
 	for _, namedConfig := range namedConfigs {

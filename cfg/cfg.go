@@ -16,13 +16,15 @@ type NamedConfig struct {
 	Exec  []string `yaml:"exec"`
 }
 
-func (d *DenvConfig) GetByName(name string) []NamedConfig {
+func (d *DenvConfig) GetByNames(names ...string) []NamedConfig {
 	var filteredConfigs []NamedConfig
 
 	for _, file := range d.files {
 		for _, namedConfig := range file.configs {
-			if namedConfig.Name == name {
-				filteredConfigs = append(filteredConfigs, namedConfig)
+			for _, name := range names {
+				if namedConfig.Name == name {
+					filteredConfigs = append(filteredConfigs, namedConfig)
+				}
 			}
 		}
 

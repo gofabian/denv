@@ -48,7 +48,7 @@ func loadRunConfig(c *cli.Context) (*cfg.NamedConfig, error) {
 	}
 
 	name := c.String("name")
-	namedConfigs := denvConfig.GetByName(name)
+	namedConfigs := denvConfig.GetByNames(name)
 	if len(namedConfigs) == 0 {
 		return nil, fmt.Errorf("unknown configuration name '%s'", name)
 	}
