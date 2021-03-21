@@ -20,10 +20,10 @@ var ShellCommand = &cli.Command{
 			Usage:   "configuration `NAME` defined in '.denv.yml'",
 		},
 	},
-	Action: shell,
+	Action: runShell,
 }
 
-func shell(c *cli.Context) error {
+func runShell(c *cli.Context) error {
 	cfg, err := loadRunConfig(c)
 	if err != nil {
 		return err

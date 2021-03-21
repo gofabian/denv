@@ -23,6 +23,7 @@ func RunCliApp() {
 				Usage:   "`PATH` to configuration file, e.g. 'path/to/config.denv.yml'",
 			},
 		},
+		Action: runShell, // fallback to shell command
 	}
 
 	err := app.Run(os.Args)

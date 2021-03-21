@@ -23,10 +23,10 @@ var RunCommand = &cli.Command{
 			Usage:   "configuration `NAME` defined in '.denv.yml'",
 		},
 	},
-	Action: run,
+	Action: runRun,
 }
 
-func run(c *cli.Context) error {
+func runRun(c *cli.Context) error {
 	config, err := loadRunConfig(c)
 	if err != nil {
 		return err
