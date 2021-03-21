@@ -2,8 +2,13 @@
 image: python:3.8
 shell: /bin/bash
 exec:
-  - ls -l
+  - ls
   - echo yes
+---
+image: busybox
+exec:
+  - echo busybox
+  - whoami
 ---
 name: extra
 image: busybox

@@ -20,7 +20,9 @@ func execDockerRun(image string, dockerArgs []string, dockerCmd []string) error 
 	cliCmd = append(cliCmd, dockerCmd...)
 
 	exitCode := execCommand(cliCmd)
-	os.Exit(exitCode)
+	if exitCode != 0 {
+		os.Exit(exitCode)
+	}
 	return nil
 }
 

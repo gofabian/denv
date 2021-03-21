@@ -48,12 +48,13 @@ func loadRunConfig(c *cli.Context) (*cfg.NamedConfig, error) {
 	}
 
 	name := c.String("name")
-	config := denvConfig.GetByName(name)
-	if config == nil {
+	namedConfigs := denvConfig.GetByName(name)
+	if len(namedConfigs) == 0 {
 		return nil, fmt.Errorf("unknown configuration name '%s'", name)
 	}
-	if config.Image == "" {
+	namedConfig := namedConfigs[0]
+	if namedConfig.Image == "" {
 		return nil, fmt.Errorf("missing image")
 	}
-	return config, nil
+	return &namedConfig, nil
 }
