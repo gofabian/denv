@@ -1,5 +1,6 @@
 ---
 image: python:3.8
+shell: /bin/bash
 ---
 name: extra
 image: busybox

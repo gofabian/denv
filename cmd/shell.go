@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"github.com/google/shlex"
 	"github.com/urfave/cli/v2"
 )
 
@@ -28,5 +29,16 @@ func shell(c *cli.Context) error {
 		return err
 	}
 
-	return execDockerRun(cfg.Image, []string{"/bin/sh"})
+	args := []string{"/bin/sh"}
+	if cfg.Shell != "" {
+		customArgs, err := shlex.Split(cfg.Shell)
+		if err != nil {
+			return err
+		}
+		if len(args) > 0 {
+			args = customArgs
+		}
+	}
+
+	return execDockerRun(cfg.Image, args)
 }

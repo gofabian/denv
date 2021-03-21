@@ -16,6 +16,7 @@ type DenvConfig struct {
 type NamedConfig struct {
 	Name  string `yaml:"name"`
 	Image string `yaml:"image"`
+	Shell string `yaml:"shell"`
 }
 
 func (cfg *DenvConfig) GetByName(name string) *NamedConfig {
