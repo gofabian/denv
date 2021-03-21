@@ -8,12 +8,12 @@ import (
 )
 
 func LoadConfigFrom(path string) (*DenvConfig, error) {
-	configs, err := parseConfigFile(path)
+	configFile, err := parseConfigFile(path)
 	if err != nil {
 		return nil, err
 	}
 
-	denvConfig := &DenvConfig{configs: configs}
+	denvConfig := &DenvConfig{files: []ConfigFile{*configFile}}
 	return denvConfig, nil
 }
 
@@ -29,17 +29,17 @@ func LoadConfigFromDefaultDirs() (*DenvConfig, error) {
 	}
 
 	for _, path := range paths {
-		configs, err := parseConfigFile(path)
+		configFile, err := parseConfigFile(path)
 		if err != nil {
 			return nil, err
 		}
-		denvConfig.configs = append(denvConfig.configs, configs...)
+		denvConfig.files = append(denvConfig.files, *configFile)
 	}
 
 	return denvConfig, nil
 }
 
-func parseConfigFile(path string) ([]NamedConfig, error) {
+func parseConfigFile(path string) (*ConfigFile, error) {
 	file, err := os.Open(path)
 	if err != nil {
 		return nil, err
@@ -47,7 +47,7 @@ func parseConfigFile(path string) ([]NamedConfig, error) {
 	defer file.Close()
 
 	decoder := yaml.NewDecoder(file)
-	configs := []NamedConfig{}
+	configFile := &ConfigFile{}
 
 	for {
 		cfg := NamedConfig{}
@@ -58,8 +58,8 @@ func parseConfigFile(path string) ([]NamedConfig, error) {
 		if err != nil {
 			return nil, err
 		}
-		configs = append(configs, cfg)
+		configFile.configs = append(configFile.configs, cfg)
 	}
 
-	return configs, nil
+	return configFile, nil
 }
