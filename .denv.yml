@@ -1,15 +1,17 @@
 ---
 image: python:3.8
+args: -e BIG=small
 shell: /bin/bash
 exec:
-  - ls
-  - echo yes
+  - python -V
+
 ---
 name: build
 image: busybox
 exec:
   - echo busybox
   - whoami
+
 ---
 name: extra
 image: busybox

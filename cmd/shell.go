@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"os"
+
 	"github.com/google/shlex"
 	"github.com/urfave/cli/v2"
 )
@@ -35,10 +37,15 @@ func runShell(c *cli.Context) error {
 		if err != nil {
 			return err
 		}
-		if len(dockerCmd) > 0 {
+		if len(customCmd) > 0 {
 			dockerCmd = customCmd
 		}
 	}
 
-	return execDockerRun(cfg.Image, nil, dockerCmd)
+	cmd, err := createDockerRunCmd(cfg.Image, dockerCmd, nil)
+	if err != nil {
+		return err
+	}
+	executeCmd(cmd, os.Stdout, os.Stderr)
+	return nil
 }

@@ -2,43 +2,41 @@ package cmd
 
 import (
 	"fmt"
+	"io"
 	"os"
 	"os/exec"
 	"strings"
 )
 
-func execDockerRun(image string, dockerArgs []string, dockerCmd []string) error {
+func createDockerRunCmd(image string, dockerCmd []string, dockerArgs []string) (args []string, err error) {
 	cwd, err := os.Getwd()
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	cliCmd := []string{"docker", "run", "--rm", "-it", "-v", cwd + ":/denv/workdir",
-		"-w", "/denv/workdir"}
-	cliCmd = append(cliCmd, dockerArgs...)
-	cliCmd = append(cliCmd, image)
-	cliCmd = append(cliCmd, dockerCmd...)
+	cmd := []string{"docker", "run", "--rm", "-it", "-v", cwd + ":/denv/workdir", "-w", "/denv/workdir"}
+	cmd = append(cmd, dockerArgs...)
+	cmd = append(cmd, image)
+	cmd = append(cmd, dockerCmd...)
+	return cmd, nil
+}
 
-	exitCode := execCommand(cliCmd)
+func executeCmd(cmd []string, stdout io.Writer, stderr io.Writer) {
+	printCmd(cmd)
+	cliCmd := exec.Command(cmd[0], cmd[1:]...)
+	cliCmd.Stdin = os.Stdin
+	cliCmd.Stdout = stdout
+	cliCmd.Stderr = stderr
+	cliCmd.Run()
+	exitCode := cliCmd.ProcessState.ExitCode()
 	if exitCode != 0 {
 		os.Exit(exitCode)
 	}
-	return nil
 }
 
-func execCommand(args []string) int {
-	printCommand(args)
-	cmd := exec.Command(args[0], args[1:]...)
-	cmd.Stdin = os.Stdin
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-	cmd.Run()
-	return cmd.ProcessState.ExitCode()
-}
-
-func printCommand(args []string) {
-	escapedArgs := make([]string, len(args))
-	for i, a := range args {
+func printCmd(cmd []string) {
+	escapedArgs := make([]string, len(cmd))
+	for i, a := range cmd {
 		if strings.ContainsRune(a, ' ') {
 			escapedArgs[i] = "\"" + a + "\""
 		} else {

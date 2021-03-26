@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/urfave/cli/v2"
 
@@ -33,7 +34,12 @@ func runRun(c *cli.Context) error {
 	}
 
 	dockerCmd := c.Args().Slice()
-	return execDockerRun(config.Image, nil, dockerCmd)
+	cmd, err := createDockerRunCmd(config.Image, dockerCmd, nil)
+	if err != nil {
+		return err
+	}
+	executeCmd(cmd, os.Stdout, os.Stderr)
+	return nil
 }
 
 func loadRunConfig(c *cli.Context) (*cfg.NamedConfig, error) {

@@ -73,7 +73,16 @@ func executeNamedConfig(namedConfig *cfg.NamedConfig) error {
 	// run script in Docker container
 	dockerArgs := []string{"-v", file.Name() + ":/denv/exec.sh"}
 	dockerCmd := []string{"/bin/sh", "/denv/exec.sh"}
-	return execDockerRun(namedConfig.Image, dockerArgs, dockerCmd)
+	cmd, err := createDockerRunCmd(namedConfig.Image, dockerCmd, dockerArgs)
+	if err != nil {
+		return err
+	}
+	executeCmd(
+		cmd,
+		NewPrefixWriter("\x1b[32m[stdout]\x1b[0m ", os.Stdout),
+		NewPrefixWriter("\x1b[31m[stderr]\x1b[0m ", os.Stderr),
+	)
+	return nil
 }
 
 var scriptTemplate string = `set -e
